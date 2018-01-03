@@ -1,44 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Converters;
 using TerminalManager.Entities;
-
 
 namespace TerminalManager.Helpers
 {
     public class APIRequest
     {
-        public static async Task<bool> PostRequest(Dictionary<string, string> values)
+        public static bool PostRequest(Dictionary<string, string> values)
         {
-            using (var client = new HttpClient())
+            string json = JsonConvert.SerializeObject(values, new KeyValuePairConverter());
+            try
             {
-                var response = await client.PostAsync(
-                    Settings.Instance.ApiServerAddress + "/terminaldetails",
-                    new FormUrlEncodedContent(values));
-
-                if (response.StatusCode == HttpStatusCode.OK)
-                    return true;
+                var client = new WebClient();
+                client.UploadData(Settings.Instance.ApiServerAddress + "/terminaldetails", "POST",
+                    Encoding.Default.GetBytes(json));
+                return true;
             }
-            return false;
-        }
-        
-        public static async Task<string> GetRequest(string parameter)
-        {
-            using (var client = new HttpClient())
+            catch (WebException ex)
             {
-                var response = await client.GetAsync(Settings.Instance.ApiServerAddress + "/getdetails/" + parameter);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    string json = await response.Content.ReadAsStringAsync();
-                    return JsonConvert.DeserializeObject<string>(json, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-                }
+                ErrorLogger.Instance.Write("[TERMINALUPDATE] Error when updating TerminalClientDetails. Exception: " + ex.Response);
+                return false;
             }
-            return null;
         }
     }
 }
