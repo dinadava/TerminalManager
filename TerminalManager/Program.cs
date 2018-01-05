@@ -92,9 +92,9 @@ namespace TerminalManager
                 return false;
             }
             // check ftp address, username, and password
-            if (Settings.Instance.FtpUsername != ""||
-                Settings.Instance.FtpPassword != "" ||
-                Settings.Instance.FtpAddress != "")
+            if (Settings.Instance.FtpUsername == ""||
+                Settings.Instance.FtpPassword == "" ||
+                Settings.Instance.FtpAddress == "")
             {
                 MessageBox.Show("Incomplete FTP Credentials on Settings File. Application is now closing.");
                 ErrorLogger.Instance.Write("[RunCheckers] Incomplete FTP Credentials on Settings File.");
@@ -103,7 +103,7 @@ namespace TerminalManager
             // check folder paths
             if (Settings.Instance.Type != 3) // for PosType 1,2 only
             {
-                if (Settings.Instance.ServerFolderPath != "")
+                if (Settings.Instance.ServerFolderPath == "")
                 {
                     MessageBox.Show("ServerFolderPath in settings is empty. Application is now closing.");
                     ErrorLogger.Instance.Write("[RunCheckers] ServerFolderPath in settings is blank!");
@@ -112,7 +112,7 @@ namespace TerminalManager
             }
             if (Settings.Instance.Type != 1) // for PosType 2,3 only
             {
-                if (Settings.Instance.POSFolderPath != "")
+                if (Settings.Instance.POSFolderPath == "")
                 {
                     MessageBox.Show("POSFolderPath in settings is empty. Application is now closing.");
                     ErrorLogger.Instance.Write("[RunCheckers] POSFolderPath in settings is blank!");

@@ -184,7 +184,7 @@ namespace TerminalManager.Entities
                         if (ptuInfo.Rows[0][i].ToString() == "0000-0000-000")
                             this.PosStatus = Enums.PosStatus.None;
                     }
-                    else if((int)ptuInfo.Rows[0][i] == 0)
+                    else if((ptuInfo.Rows[0][i]).ToString() == "0" || (ptuInfo.Rows[0][i]).ToString() == null)
                     {
                         this.PosStatus = Enums.PosStatus.None;
                         return;

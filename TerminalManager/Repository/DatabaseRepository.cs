@@ -70,7 +70,7 @@ namespace TerminalManager.Repository
                 FROM
                     `config`
                 WHERE
-                    `particular` = 'terminal'
+                    `particular` = 'terminalno'
                 LIMIT 1").ExecuteReader().Rows[0][0].ToString(),
                 out temp);
             return temp;

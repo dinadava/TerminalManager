@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TerminalManager.Helpers;
 
 namespace TerminalManager.Repository
@@ -26,7 +23,7 @@ namespace TerminalManager.Repository
                                         FROM 
                                             `terminal` 
                                         WHERE
-                                            `ACTIVE` = 1 AND `branchid` = " + Settings.Instance.BranchId
+                                            `branchid` = " + Settings.Instance.BranchId
                                         ).ExecuteReader();
             foreach (DataRow row in dt.Rows)
             {
