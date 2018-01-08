@@ -1,6 +1,3 @@
-﻿using System;
-using System.Linq;
-
 namespace TerminalManager.Helpers
 {
     public class HexConverterHelper

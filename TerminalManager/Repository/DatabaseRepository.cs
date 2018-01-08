@@ -1,4 +1,3 @@
-﻿using System.IO;
 using TerminalManager.Helpers;
 
 namespace TerminalManager.Repository

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Setting>
+  <Application>
+    <Version>1.0</Version>
+    <SoftwareName>TerminalManager</SoftwareName>
+    <Type>1</Type>
+    <ClientNetworkId>1000</ClientNetworkId>
+    <TerminalNumber>0</TerminalNumber>
+    <Server>localhost</Server>
+    <Database>database</Database>
+    <Username>root</Username>
+    <Password>1JvGsFBgA6fydZYfuk3kEw==</Password>
+    <BranchId>10</BranchId>
+    <CheckTime>10:00,18:00</CheckTime>
+    <ServerFolderPath>C:\Nelsoft</ServerFolderPath>
+    <PosFolderPath></PosFolderPath>
+    <FtpAddress></FtpAddress>
+    <FtpUsername></FtpUsername>
+    <FtpPassword></FtpPassword>
+    <ApiServerAddress></ApiServerAddress>
+  </Application>
+</Setting>

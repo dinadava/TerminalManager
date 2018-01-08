@@ -1,0 +1,5 @@
+<QueryList>
+  <Query Id="0" Path="System">
+    <Select Path="System">*[System[(Level=2) and (EventID=6008) and TimeCreated[timediff(@SystemTime) &lt;= 604800000]]]</Select>
+  </Query>
+</QueryList>

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using MySql.Data.MySqlClient;
 using TerminalManager.Entities;
+using TerminalManager.Helpers;
 
 namespace TerminalManager.Repository
 {
@@ -9,7 +11,6 @@ namespace TerminalManager.Repository
     {
         public bool _clientExist;
         public bool _isSuccessful;
-        //public string jsonString;
         
         public NelsoftDbRepository()
         {
@@ -68,7 +69,6 @@ namespace TerminalManager.Repository
         
         private Terminal GetTerminalDetails()
         {
-            //string jsonString = "";
             string query = "SELECT `id` as `clientbranchid`" +
                             " FROM `clientdetails`" +
                             " WHERE `clientid` = " + Settings.Instance.ClientId +
@@ -82,7 +82,6 @@ namespace TerminalManager.Repository
             };
 
             return terminalDetails;
-            //return jsonString;
         }
 
 
@@ -141,6 +140,37 @@ namespace TerminalManager.Repository
                 ErrorLogger.Instance.Write("[TERMINALUPDATE] Error when updating TerminalClientDetails on port82. Exception: " + e);
                 return false;
             }
+        }
+
+        // for API
+        private bool UpdloadTerminalDetails()
+        {
+            Dictionary<string, string> terminalDictionary = new Dictionary<string, string>();
+            Terminal terminal = new Terminal();
+
+            terminalDictionary.Add("clientid", terminal.ClientId.ToString());
+            terminalDictionary.Add("branchid", terminal.BranchId.ToString());
+            terminalDictionary.Add("type", terminal.TerminalType.ToString());
+            terminalDictionary.Add("referenceno", terminal.TerminalNo.ToString());
+            terminalDictionary.Add("teamviewer_id", terminal.TeamViewerID);
+            terminalDictionary.Add("teamviewer_pass", terminal.TeamViewerPass);
+            terminalDictionary.Add("versionno", terminal.SystemVersion);
+            terminalDictionary.Add("autosyncversion", terminal.AutoSyncVersion);
+            terminalDictionary.Add("dbversion", terminal.DbVersion);
+            terminalDictionary.Add("remark", terminal.Remark);
+            terminalDictionary.Add("permitno", terminal.PermitNo);
+            terminalDictionary.Add("machineno", terminal.MachineNo);
+            terminalDictionary.Add("serialno", terminal.SerialNo);
+            terminalDictionary.Add("posstatusid", ((int)terminal.PosType).ToString());
+            terminalDictionary.Add("name", terminal.TerminalName);
+            terminalDictionary.Add("companyaccre", ((int)terminal.CompanyAccredType).ToString());
+            terminalDictionary.Add("mallaccre", ((int)terminal.MallAccredType).ToString());
+            terminalDictionary.Add("postype", ((int)terminal.PosType).ToString());
+
+            if (APIRequest.PostRequest(terminalDictionary))
+                return true;
+            else
+                return false;
         }
     }
 }

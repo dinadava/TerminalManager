@@ -12,6 +12,8 @@ namespace TerminalManager.Entities
     public class Terminal
     {
         public int ClientDetailsID { get; set; }
+        public int ClientId = 0;
+        public int BranchId = 0;
         public int TerminalType;
         public int TerminalNo;
         public string TeamViewerID = "";

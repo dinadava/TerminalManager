@@ -34,7 +34,6 @@ namespace TerminalManager
                     TerminalLogger.Instance.Write("[STATUS] Exit");
                     Application.Exit();
                 }
-                //Application.Run(new MainForm());
             }
         }
 
