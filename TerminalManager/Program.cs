@@ -61,12 +61,19 @@ namespace TerminalManager
                 ErrorLogger.Instance.Write("[RunCheckers] Invalid Type on Settings file.");
                 return false;
             }
-            // check if clientid valid
+            // check if clientid exist on port82
             NelsoftDbRepository nelsoftDb = new NelsoftDbRepository();
             if (!nelsoftDb._clientExist)
             {
                 MessageBox.Show("Invalid ClientNetworkID on Settings file!");
-                ErrorLogger.Instance.Write("[RunCheckers] Invalid ClientNetworkID on Settings file!");
+                ErrorLogger.Instance.Write("[RunCheckers] Invalid ClientNetworkID on Settings file! ClientId does not exist on clienthead table.");
+                return false;
+            }
+            // check if branch exist for client on port82
+            if (!nelsoftDb._branchExist)
+            {
+                MessageBox.Show("Invalid BranchID for ClientNetworkID in Settings file!");
+                ErrorLogger.Instance.Write("[RunCheckers] Invalid BranchID for ClientNetworkID in Settings file! BranchId does not exist for ClientNetworkId on clientdetails table.");
                 return false;
             }
             // check if branchid match config

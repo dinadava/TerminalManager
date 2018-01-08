@@ -10,12 +10,15 @@ namespace TerminalManager.Repository
     public class NelsoftDbRepository
     {
         public bool _clientExist;
+        public bool _branchExist;
         public bool _isSuccessful;
         
         public NelsoftDbRepository()
         {
             _clientExist = ClientExist();
+            _branchExist = BranchExist();
             _isSuccessful = UpdateTerminals(this.GetTerminalDetails());
+           // _isSuccessful = UpdloadTerminalDetails();
         }
 
         // to be removed 
@@ -54,6 +57,12 @@ namespace TerminalManager.Repository
 
         public bool ClientExist()
         {
+            //// For API
+            //string result = APIRequest.GetRequest(Settings.Instance.ApiServerAddress + "/getclient/" + Settings.Instance.ClientId);
+            //if (result != "")
+            //    return true;
+            //return false;
+
             string query = "SELECT `id` FROM `clienthead` WHERE `id` = " + Settings.Instance.ClientId + " LIMIT 1";
             if (this.ExecuteReader(query).Rows.Count > 0)
                 return true;
@@ -67,14 +76,32 @@ namespace TerminalManager.Repository
             return ExecuteReader(query).Rows.Count > 0;
         }
         
+        private bool BranchExist()
+        {
+            //// For API
+            //string result = result = APIRequest.GetRequest(Settings.Instance.ApiServerAddress + "/" + "getbranchbyclient?branchId=" + Settings.Instance.ClientId + "&clientId=" + Settings.Instance.BranchId);
+            //if (result != "")
+            //    return true;
+            //return false;
+
+            string query = @"SELECT `branchid` as `clientbranchid` FROM `clientdetails` WHERE `clientid` = " +
+                           Settings.Instance.ClientId +
+                           "AND `branchid` = " + Settings.Instance.BranchId;
+            if (this.ExecuteReader(query).Rows.Count > 0)
+                return true;
+            return false;
+        }
+
         private Terminal GetTerminalDetails()
         {
+            int clientbranchId = 0;
             string query = "SELECT `id` as `clientbranchid`" +
                             " FROM `clientdetails`" +
                             " WHERE `clientid` = " + Settings.Instance.ClientId +
                             " AND `branchid` = " + Settings.Instance.BranchId +
                             " LIMIT 1";
-            int clientbranchId = Convert.ToInt32(this.ExecuteReader(query).Rows[0]["clientbranchid"]);
+            if(this.ExecuteReader(query).Rows.Count > 0)   
+                clientbranchId = Convert.ToInt32(this.ExecuteReader(query).Rows[0]["clientbranchid"]);
 
             Terminal terminalDetails = new Terminal
             {
@@ -87,6 +114,11 @@ namespace TerminalManager.Repository
 
         private bool UpdateTerminals(Terminal terminal)
         {
+            if (terminal.ClientDetailsID == 0)
+            {
+                ErrorLogger.Instance.Write("[TERMINALUPDATE] Error when updating TerminalClientDetails on port82. BranchID " +Settings.Instance.BranchId+" for ClientNetworkId "+Settings.Instance.ClientId+ " does not exist!");
+                return false;
+            }
             bool isUpdate = false;
             string query;
             if (!TerminalExist(terminal.ClientDetailsID, terminal.TerminalNo))
@@ -166,8 +198,8 @@ namespace TerminalManager.Repository
             terminalDictionary.Add("companyaccre", ((int)terminal.CompanyAccredType).ToString());
             terminalDictionary.Add("mallaccre", ((int)terminal.MallAccredType).ToString());
             terminalDictionary.Add("postype", ((int)terminal.PosType).ToString());
-
-            if (APIRequest.PostRequest(terminalDictionary))
+            
+            if (APIRequest.PostRequest(Settings.Instance.ApiServerAddress + "/terminaldetails", terminalDictionary))
                 return true;
             else
                 return false;
