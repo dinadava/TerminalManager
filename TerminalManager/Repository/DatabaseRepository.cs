@@ -1,3 +1,4 @@
+using System.Data;
 using TerminalManager.Helpers;
 
 namespace TerminalManager.Repository
@@ -7,7 +8,7 @@ namespace TerminalManager.Repository
         public static decimal GetDbSize()
         {
             decimal size = 0;
-            decimal.TryParse(new SqlQuery(@"
+            DataTable dt = new SqlQuery(@"
                     SELECT 
                         table_schema 'DB Name', 
                     ROUND
@@ -15,63 +16,68 @@ namespace TerminalManager.Repository
                     FROM
                         information_schema.tables 
                     WHERE 
-                        table_schema = '"+ Settings.Instance.Database + "' GROUP  BY table_schema;"
-                        ).ExecuteReader().Rows[0][1].ToString(),
-                    out size);
+                        table_schema = '" + Settings.Instance.Database + "' GROUP  BY table_schema;"
+                ).ExecuteReader();
+            if (dt.Rows.Count > 0)
+                decimal.TryParse(dt.Rows[0][1].ToString(),out size);
             return size;
         }
         public static string GetLocalNetworkIP()
         {
-            string returnValue = new SqlQuery(@"
+            DataTable dt = new SqlQuery(@"
                             SELECT
                                 `localnetworkip`
                             FROM
                                 `branch`
                             WHERE
                                 `wid` = " + Settings.Instance.BranchId + " LIMIT 1"
-                                ).ExecuteReader().Rows[0][0].ToString();
-            if (returnValue != null)
-                return returnValue;
+                ).ExecuteReader();
+            if (dt.Rows.Count > 0)
+                return dt.Rows[0][0].ToString();
             return null;
         }
         public static long GetDbBranchId()
         {
             long temp = 0;
-            long.TryParse(new SqlQuery(@"
+            DataTable dt = new SqlQuery(@"
                 SELECT
                     `value`
                 FROM
                     `config`
                 WHERE
                     `particular` = 'branchid'
-                LIMIT 1").ExecuteReader().Rows[0][0].ToString(),
-                out temp);
+                LIMIT 1").ExecuteReader();
+            if (dt.Rows.Count > 0)
+                long.TryParse(dt.Rows[0][0].ToString(),out temp);
             return temp;
         }
         public static string GetDbVersion()
         {
-            string temp = new SqlQuery(@"
+            DataTable dt = new SqlQuery(@"
                 SELECT
                     `value`
                 FROM
                     `config`
                 WHERE
                     `particular` = 'version'
-                LIMIT 1").ExecuteReader().Rows[0][0].ToString();
-            return temp;
+                LIMIT 1").ExecuteReader();
+            if (dt.Rows.Count > 0)
+                return dt.Rows[0][0].ToString();
+            return "";
         }
         public static int GetDbTerminalNo()
         {
             int temp = 0;
-            int.TryParse(new SqlQuery(@"
+            DataTable dt = new SqlQuery(@"
                 SELECT
                     `value`
                 FROM
                     `config`
                 WHERE
                     `particular` = 'terminalno'
-                LIMIT 1").ExecuteReader().Rows[0][0].ToString(),
-                out temp);
+                LIMIT 1").ExecuteReader();
+            if (dt.Rows.Count > 0)
+                int.TryParse(dt.Rows[0][0].ToString(), out temp);
             return temp;
         }
         

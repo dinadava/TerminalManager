@@ -86,7 +86,7 @@ namespace TerminalManager.Repository
 
             string query = @"SELECT `branchid` as `clientbranchid` FROM `clientdetails` WHERE `clientid` = " +
                            Settings.Instance.ClientId +
-                           "AND `branchid` = " + Settings.Instance.BranchId;
+                           " AND `branchid` = " + Settings.Instance.BranchId;
             if (this.ExecuteReader(query).Rows.Count > 0)
                 return true;
             return false;

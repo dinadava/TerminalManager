@@ -182,6 +182,7 @@ namespace TerminalManager
                     TerminalLogger.Instance.Write("[STATUS] Exit");
                 }
             }
+            TerminalLogger.Instance.Write("[STATUS] Exit");
         }
 
         private void UploadLogsButton_Click(object sender, EventArgs e)
