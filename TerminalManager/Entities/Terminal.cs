@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Shell32;
 using TerminalManager.Helpers;
 using TerminalManager.Repository;
 
@@ -40,7 +41,7 @@ namespace TerminalManager.Entities
         private void SetTerminalDetails()
         {
             this.TerminalType = Settings.Instance.Type;
-            this.TerminalNo = Settings.Instance.Type;
+            this.TerminalNo = Settings.Instance.TerminalNo;
             #region TeamViewer
             Process process = new Process
             {
@@ -88,8 +89,7 @@ namespace TerminalManager.Entities
                     break;
             }
             #endregion
-            #region Autosync Version
-            #endregion
+            this.AutoSyncVersion = getAutosyncVersion();
             this.DbVersion = DatabaseRepository.GetDbVersion();
             SetPosInfo();
         }
@@ -98,7 +98,7 @@ namespace TerminalManager.Entities
         {
             string version = "";
             string serverPath = Settings.Instance.ServerFolderPath;
-            string configfilePath = serverPath + "/backstage/config.xml";
+            string configfilePath = serverPath + "\\backstage\\config.xml";
             if (File.Exists(configfilePath))
             {
                 try
@@ -137,6 +137,27 @@ namespace TerminalManager.Entities
             }
             return version;
         }
+        private string getAutosyncVersion()
+        {
+            string startupFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "\\AutoSync.exe.lnk";
+            if (File.Exists(startupFolderPath))
+            {
+                string pathOnly = System.IO.Path.GetDirectoryName(startupFolderPath);
+                string filenameOnly = System.IO.Path.GetFileName(startupFolderPath);
+
+                Shell shell = new Shell();
+                Folder folder = shell.NameSpace(pathOnly);
+                FolderItem folderItem = folder.ParseName(filenameOnly);
+                if (folderItem != null)
+                {
+                    Shell32.ShellLinkObject link = (Shell32.ShellLinkObject) folderItem.GetLink;
+                    var versionInfo = FileVersionInfo.GetVersionInfo(link.Path);
+                    return versionInfo.ProductVersion;
+                }
+            }
+            return "";
+        }
+
         private void SetPosInfo()
         {
             if (this.TerminalType == 1)
@@ -150,7 +171,7 @@ namespace TerminalManager.Entities
             if (File.Exists(settingsXml))
             {
                 XDocument xmlDocument = XDocument.Load(settingsXml);
-                XElement _application = xmlDocument.Element("Settings").Element("Application");
+                XElement _application = xmlDocument.Element("Setting").Element("Application");
                 this.PosType = Convert.ToInt32(_application.Element("TakeOrderOnly").Value) == 1
                     ? Enums.PosType.TakeOrder
                     : Enums.PosType.Restaurant;
@@ -222,7 +243,7 @@ namespace TerminalManager.Entities
                 case "NELSOFT TECHNOLOGY SERVICE":
                     this.CompanyAccredType = Enums.CompanyAccredType.Services;
                     break;
-                case "NELSOFT TECHNOLOGY INC.":
+                case "NELSOFT TECHNOLOGY INCORPORATED":
                     this.CompanyAccredType = Enums.CompanyAccredType.Technology;
                     break;
                 case "NELSOFT SYSTEMS INC.":

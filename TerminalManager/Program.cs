@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.AccessControl;
 using System.Threading;
 using System.Windows.Forms;
 using TerminalManager.Entities;
@@ -27,16 +30,22 @@ namespace TerminalManager
                 }
 
                 TerminalLogger.Instance.Write("[STATUS] Start");
-                if (RunCheckers())
-                    Application.Run(new MainForm());
-                else
+                if (!RunCheckers())
                 {
                     TerminalLogger.Instance.Write("[STATUS] Exit");
                     Application.Exit();
                 }
+                Application.Run();
             }
         }
-
+        
+        public static void Restart()
+        {
+            TerminalLogger.Instance.Write("[STATUS] Restart");
+            Process.Start(Application.ExecutablePath);
+            Process.GetCurrentProcess().Kill();
+        }
+        
         static bool RunCheckers()
         {
             MainForm form = new MainForm();
@@ -74,6 +83,13 @@ namespace TerminalManager
             {
                 MessageBox.Show("Invalid BranchID for ClientNetworkID in Settings file!");
                 ErrorLogger.Instance.Write("[RunCheckers] Invalid BranchID for ClientNetworkID in Settings file! BranchId does not exist for ClientNetworkId on clientdetails table.");
+                return false;
+            }
+            // check if clientid match config
+            if (DatabaseRepository.GetDbClientId() != 0 && Settings.Instance.ClientId != DatabaseRepository.GetDbClientId())
+            {
+                MessageBox.Show("ClientId in settings and in config does not match!");
+                ErrorLogger.Instance.Write("[RunCheckers] ClientId in settings and in config does not match!");
                 return false;
             }
             // check if branchid match config

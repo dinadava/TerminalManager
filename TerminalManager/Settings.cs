@@ -20,13 +20,14 @@ namespace TerminalManager
         public string Password { get; set; }
         public int BranchId { get; set; }
         public string[] CheckTime { get; set; }
-        public string ServerFolderPath;
-        public string POSFolderPath;
+        public string ServerFolderPath = "";
+        public string POSFolderPath = "";
 
-        public string FtpUsername { get; set; }
-        public string FtpPassword { get; set; }
-        public string FtpAddress { get; set; }
-        public string ApiServerAddress { get; set; }
+        public string FtpUsername = "";
+        public string FtpPassword = "";
+        public string FtpAddress = "";
+        public string ApiServerAddress = "";
+
         public static Settings Instance
         {
             private set { _instance = value; }
